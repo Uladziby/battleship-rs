@@ -12,9 +12,6 @@ export const ActionType = {
 
 export type FormLogin = {
   type: typeof ActionType.REG;
-  data: {
-    name: string;
-    password: string;
-  };
+  data: string;
   id: number;
 };
