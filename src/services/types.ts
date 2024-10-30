@@ -7,6 +7,11 @@ export type User = {
   wins: number;
 };
 
+export type UserData = {
+  name: string;
+  userId: string | number;
+};
+
 export type ResponseLoginData = {
   name: string;
   index: string;
@@ -20,16 +25,14 @@ export type RequestUpdateRoom = {
   id: number;
 };
 
-export type RoomsData =
-  | [
-      {
-        roomId: string | number;
-        roomUsers: RoomUser[];
-      }
-    ]
-  | [];
+export type RoomsData = [
+  {
+    roomId: string | number;
+    roomUsers: RoomUser[];
+  }
+];
 
 export type RoomUser = {
   name: string;
-  index: string | number;
+  userId: string | number;
 };

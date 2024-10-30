@@ -1,4 +1,5 @@
-import { ResponseLoginData, User } from "@/src/services/types";
+import { User } from "@/src/services/types";
+import { v4 as uuidv4 } from "uuid";
 
 export class UserService {
   users: User[] = [];
@@ -27,7 +28,7 @@ export class UserService {
     const newUser: User = {
       name: parsedData.name,
       password: parsedData.password,
-      id: this.users.length.toString(),
+      id: uuidv4(),
       wins: 0,
     };
 
