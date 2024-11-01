@@ -1,15 +1,16 @@
-import { RoomsData } from "@/src/services/types";
+import { RoomsData, UserData } from "@/src/services/types";
+import { ActionType } from "@/src/type/types";
 import { v4 as uuidv4 } from "uuid";
 
 export class RoomService {
   rooms: RoomsData = [{ roomId: "0", roomUsers: [] }];
 
-  createRoom({ userId, name }: { userId: string | number; name: string }) {
+  createRoom({ index, name }: { index: string | number; name: string }) {
     const newRoom = {
       roomId: uuidv4(),
       roomUsers: [
         {
-          userId: userId,
+          index: index,
           name: name,
         },
       ],
@@ -19,7 +20,7 @@ export class RoomService {
     return newRoom;
   }
 
-  updateRoom(websocket: unknown) {
+  updateRoom(websocket: import("ws")) {
     const rooms = this.rooms
       .filter((room) => room.roomUsers.length === 1)
       .map((room) => {
@@ -29,6 +30,23 @@ export class RoomService {
         };
       });
 
+    const updatedRoomList = {
+      type: ActionType.UPDATE_ROOM,
+      data: JSON.stringify(rooms),
+      id: 0,
+    };
+
+    console.log("listRoom", updatedRoomList);
+    websocket.send(JSON.stringify(updatedRoomList));
+
     return rooms;
+  }
+
+  addUserToRoom(idRoom: string, { index, name }: UserData) {
+    console.log("addUserToRoom", idRoom, index, name);
+    const room = this.rooms.find((room) => room.roomId === idRoom);
+    if (room) {
+      room.roomUsers.push({ index, name });
+    }
   }
 }

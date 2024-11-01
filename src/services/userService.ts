@@ -58,4 +58,15 @@ export class UserService {
       return { name, wins };
     });
   }
+
+  updateWinners(websocket: import("ws")) {
+    const winners = this.getWins();
+    const updatedWinners = {
+      type: "update_winners",
+      data: JSON.stringify(winners),
+      id: 0,
+    };
+
+    websocket.send(JSON.stringify(updatedWinners));
+  }
 }

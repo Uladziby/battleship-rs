@@ -8,10 +8,11 @@ export const ActionType = {
   START_GAME: "start_game",
   ATTACK: "attack",
   RANDOM_ATTACK: "random_attack",
+  SINGLE_PLAY: "single_play",
 };
 
 export type FormLogin = {
   type: typeof ActionType.REG;
-  data: string;
+  data: unknown;
   id: number;
 };

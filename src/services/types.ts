@@ -6,10 +6,9 @@ export type User = {
   id: string;
   wins: number;
 };
-
 export type UserData = {
+  index: string | number;
   name: string;
-  userId: string | number;
 };
 
 export type ResponseLoginData = {
@@ -34,5 +33,12 @@ export type RoomsData = [
 
 export type RoomUser = {
   name: string;
-  userId: string | number;
+  index: string | number;
+};
+
+export type Game = {
+  gameId: string;
+  roomId: string;
+  players: any[];
+  playerShips: any[];
 };
