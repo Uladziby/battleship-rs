@@ -1,19 +1,19 @@
 import { ActionType } from "@/src/type/types";
 
-export type User = {
+export type UserType = {
   name: string;
   password: string;
-  id: string;
+  id: number;
   wins: number;
 };
 export type UserData = {
-  index: string | number;
+  id: string | number;
   name: string;
 };
 
 export type ResponseLoginData = {
   name: string;
-  index: string;
+  index: string | number;
   error: boolean;
   message: string;
 };
@@ -24,6 +24,10 @@ export type RequestUpdateRoom = {
   id: number;
 };
 
+export type RoomType = {
+  id: number;
+  users: UserType[];
+};
 export type RoomsData = [
   {
     roomId: string | number;

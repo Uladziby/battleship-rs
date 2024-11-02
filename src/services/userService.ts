@@ -1,10 +1,10 @@
-import { User } from "@/src/services/types";
+import { ResponseLoginData, UserType } from "@/src/services/types";
 import { v4 as uuidv4 } from "uuid";
 
 export class UserService {
-  users: User[] = [];
+  users: UserType[] = [];
 
-  createUser(data: string) {
+  createUser(data: string): ResponseLoginData {
     const parsedData = JSON.parse(data);
     const existedUser = this.users.find(
       (user) => user.name === parsedData.name
@@ -22,17 +22,20 @@ export class UserService {
           message: "Wrong password",
         };
       }
-      return existedUser;
+      return {
+        name: existedUser.name,
+        index: existedUser.id,
+        error: false,
+        message: "User found",
+      };
     }
 
-    const newUser: User = {
+    const newUser: UserType = {
       name: parsedData.name,
       password: parsedData.password,
-      id: uuidv4(),
+      id: parseInt(uuidv4(), 16),
       wins: 0,
     };
-
-    this.getUsers();
 
     this.addUser(newUser);
 
@@ -44,13 +47,17 @@ export class UserService {
     };
   }
 
-  addUser(user: User) {
+  addUser(user: UserType) {
     this.users.push(user);
   }
 
   getUsers() {
     console.log("Get users", this.users);
     return this.users;
+  }
+
+  getUserByName(name: string): UserType | undefined {
+    return this.users.find((user) => user.name === name);
   }
 
   getWins() {

@@ -2,8 +2,8 @@ import WebSocket, { WebSocketServer } from "ws";
 import { httpServer } from "./src/http_server";
 import { ActionType, FormLogin } from "@/src/type/types";
 import { UserService } from "@/src/services/userService";
-import { RoomService } from "@/src/services/roomService";
-import { User, UserData } from "@/src/services/types";
+import { RoomService } from "@/src/services/room/roomService";
+import { UserData, UserType } from "@/src/services/types";
 import { GameService } from "@/src/services/gameService";
 
 const HTTP_PORT = 8181;
@@ -19,7 +19,8 @@ wsServer.on("connection", (ws) => {
   const userService = new UserService();
   const roomService = new RoomService();
   const gameService = new GameService();
-  let currentUser: UserData;
+  let currentUser: UserType | undefined;
+  let messageData: any;
 
   ws.on("message", (message) => {
     console.log("Received: ", message.toString());
@@ -43,24 +44,21 @@ wsServer.on("connection", (ws) => {
           }
         });
 
-        currentUser = {
-          name: newUser.name,
-          index: (newUser as { name: string; index: string }).index,
-        };
+        currentUser = userService.getUserByName(newUser.name);
 
-        return;
+        break;
       case ActionType.CREATE_ROOM:
-        const newRoom = roomService.createRoom(currentUser as UserData);
+        let newRoom;
+
+        if (currentUser) newRoom = roomService.createRoom(currentUser);
 
         const rooms = roomService.updateRoom(ws);
 
         console.dir("rooms", console.log(JSON.stringify(rooms, null, 4)));
         break;
       case ActionType.ADD_USER:
-        roomService.addUserToRoom(
-          (requestMsg.data as { indexRoom: string }).indexRoom,
-          currentUser
-        );
+        messageData = JSON.parse(message.toString());
+        if (currentUser) roomService.addUserToRoom(currentUser, messageData);
 
         const game = gameService.createGame(
           (requestMsg.data as { indexRoom: string }).indexRoom
@@ -74,11 +72,10 @@ wsServer.on("connection", (ws) => {
               type: ActionType.CREATE_GAME,
               data: JSON.stringify({
                 idGame: game.gameId,
-                idPlayer: currentUser.index,
+                idPlayer: currentUser!.id,
               }),
               id: 0,
             };
-            console.log("createGameInfo", createGameInfo);
 
             ws.send(JSON.stringify(createGameInfo));
           }
